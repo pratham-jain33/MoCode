@@ -10,19 +10,18 @@
 body {
     font-family: 'Special Gothic Expanded One', sans-serif;
     margin: 0;
-    background: #a6ada8;
+    background: #E8F4FA;
     height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    color: #2c2e2d;
 }
 
 .container {
     width: 450px;
     height: 550px;
     padding: 30px;
-    background: #252525;
+    background: #FFFFFF;
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border-radius: 25px;
@@ -33,13 +32,12 @@ body {
     justify-content: center;
     align-items: center;
     box-shadow: 40px 30px 30px #252525, -10px -10px 30px #474a48;
-    border: 3px solid #7e8580;
 }
 
 h1 {
     font-size: 2em;
     font-family: 'Special Gothic Expanded One', serif;
-    color: #898d8a;
+    color: #000000;
     letter-spacing: 1.5px;
 }
 
@@ -48,7 +46,7 @@ label {
     font-weight: 500;
     margin: 1.5em 0 0.5em 0;
     font-size: 1.1em;
-    color: #898d8a;
+    color: #000000;
 }
 
 textarea {
@@ -57,20 +55,20 @@ textarea {
     border-radius: 12px;
     padding: 1em;
     width: 100%;
-    background: #adb4af;
-    color: #252525;
+    background: #e4e4e4;
+    color: 	#3d3d3d;
     font-size: 1em;
     transition: all 0.3s ease-in-out;
 }
 
 textarea:focus {
     outline: none;
-    border-color: #1c7eff;
+    border-color: #0088cc;
     box-shadow: 0 0 10px #dfdfdf;
 }
 
 textarea::placeholder {
-    color: #252525;
+    color: 	#4d4d4d;
 }
 
 .btn-container {
@@ -80,8 +78,8 @@ textarea::placeholder {
 }
 
 button{
-    background-color: #898d8a;
-    color: #252525;
+    background-color: #007BFF;
+    color: #FFFFFF;
     font-size: 1.2em;
     border: none;
     padding-bottom: 1em 2em;
@@ -99,38 +97,47 @@ button{
 button:hover{
     background-color: #828683;
     box-shadow: 0.6px 2.5px #dfdfdf;
-    transform: rotate(5deg);
+    transform: scale(1.05);
     border: 1px solid #adb4af;
 }
 
 button:active{
     background-color: #474a48;
-    transform: rotate(-5deg);
+    transform: scaleX(180deg);
 }
 
 p {
     font-weight: 500;
     font-size: 1.1em;
-    color: #252525;
+    color: #000000;
     margin-top: 20px;
     text-align: center;
 }
 
 p span {
     font-weight: 400;
-    color: #a6ada8;
+    color: #000000;
 }
 
 h5 {
     font-family: 'Special Gothic Expanded One', serif;
-    color: #898d8a;
+    color: #000000;
     margin-bottom: 20px;
     letter-spacing: 1.5px;
 }
 
 h6 {
     font-family: 'Special Gothic Expanded One', serif;
-    color: #898d8a;
+    color: #000000;
     margin-bottom: 20px;
     letter-spacing: 1.5px;
+}
+
+.light {
+    width: 50px;
+    height: 50px;
+    border-radius: 25px;
+    background-color: #252525; /* Default color */
+    margin: 20px auto;
+    transition: background-color 0.3s;
 }
