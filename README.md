@@ -5,4 +5,4 @@ MoCode is a simple Morse Code Translator made using JavaScript
 -The program converts each character into Morse Code and displays the result.
 <br><br>
 
-Preview coming soon!
+[Check it out!](https://pratham-jain33.github.io/MoCode/)
