@@ -4,21 +4,61 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MoCode - Morse Code Translator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div class="loader">
+        <h1 class="fade-in">MoCode</h1>
+    </div>
+    
     <div class="container">
         <h1>MoCode</h1>
-        <label for="input">Enter Text or Morse Code</label>
-        <textarea id="input" rows="5" placeholder="Type here..."></textarea>
-        <div class="btn-container"></div>
-        <button id="translate">Translate</button>
-        <textarea id="output" readonly placeholder="Result"></textarea>
-        <button id="copy" class="copy-btn">Copy</button>
+        <div id="validation-message"></div>
+
         
-        <h5>Don't use punctuations!</h5>
-        <h6>-Pratham J</h6>
+        <div class="input-area">
+            <textarea id="input" rows="3" placeholder="Type here..."></textarea>
+            <div id="validation-message"></div>
+        </div>
+        
+        <div class="controls">
+            <button id="translate">
+               Translate
+            </button>
+        </div>
+        
+        <textarea id="output" rows="4" readonly placeholder="Result"></textarea>
+        
+        <div class="button-group">
+            <button id="copy" class="circle-btn" title="Copy">
+                <i class="far fa-copy"></i>
+            </button>
+            <button id="test" class="circle-btn" title="Play Audio">
+                <i class="fas fa-volume-up"></i>
+            </button>
+            <button id="reverse" class="circle-btn" title="Reverse">
+                <i class="fas fa-exchange-alt"></i>
+            </button>
+            <button id="show-history" class="circle-btn" title="History">
+                <i class="fas fa-history"></i>
+            </button>
+            
+        </div>
+        
+        <div id="history-panel" class="hidden">
+            <h3>Translation History</h3>
+            <div id="history-list"></div>
+            <button id="clear-history">
+                <i class="fas fa-trash-alt"></i>
+            </button>
+        </div>
+        
+        
+        
+        <h5>- Pratham J</h5>
     </div>
+    
     <script src="script.js"></script>
 </body>
 </html>
