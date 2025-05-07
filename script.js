@@ -30,12 +30,19 @@ const elements = {
         show: document.getElementById("show-history"),
         clear: document.getElementById("clear-history")
     },
-    
+    cameraOptions: document.getElementById('camera-options'),
+    takePhoto: document.getElementById('take-photo'),
+    choosePhoto: document.getElementById('choose-photo'),
+    imagePreviewContainer: document.getElementById('image-preview-container'),
+    imagePreview: document.getElementById('image-preview'),
+    cancelPreview: document.getElementById('cancel-preview'),
+    notification: document.getElementById('notification'),
+    openCamera: document.getElementById('open-camera'),
+    imageUpload: document.getElementById('image-upload')
 };
 
 // State
 let translationHistory = JSON.parse(localStorage.getItem('morseHistory')) || [];
-
 
 // Input Validation
 function validateInput() {
@@ -62,11 +69,13 @@ function validateInput() {
         elements.validation.textContent = `Invalid characters: ${[...new Set(invalidChars)].join(', ')}`;
         elements.validation.classList.add('show');
         elements.input.classList.add('invalid');
+        elements.translate.disabled = true;
         return false;
     }
     
     elements.validation.classList.remove('show');
     elements.input.classList.remove('invalid');
+    elements.translate.disabled = false;
     return true;
 }
 
@@ -121,58 +130,19 @@ function updateHistoryDisplay() {
     `).join('') || '<div class="history-item">No history yet</div>';
 }
 
-
-
-// Event Listeners
-elements.input.addEventListener('input', validateInput);
-elements.translate.addEventListener("click", translateText);
-
-elements.copy.addEventListener("click", () => {
-    elements.output.select();
-    document.execCommand("copy");
-    elements.copy.innerHTML = '<i class="fas fa-check"></i>';
-    setTimeout(() => elements.copy.innerHTML = '<i class="far fa-copy"></i>', 2000);
-});
-
-elements.test.addEventListener("click", () => {
-    if (elements.output.value) {
-        elements.test.classList.add('playing');
-        playMorseSound(elements.output.value);
-        setTimeout(() => elements.test.classList.remove('playing'), 2000);
-    }
-});
-
-elements.reverse.addEventListener("click", () => {
-    if (elements.output.value) {
-        [elements.input.value, elements.output.value] = [elements.output.value, elements.input.value];
-        elements.reverse.classList.add('active');
-        setTimeout(() => elements.reverse.classList.remove('active'), 1000);
-        if (elements.input.value.trim()) translateText();
-    }
-});
-
-elements.history.show.addEventListener('click', () => {
-    elements.history.panel.classList.toggle('hidden');
-    if (!elements.history.panel.classList.contains('hsory')) updateHistoryDisplay();
-});
-
-elements.history.clear.addEventListener('click', () => {
-    translationHistory = [];
-    localStorage.removeItem('morseHistory');
-    updateHistoryDisplay();
-});
-
-
-// Initialization
-window.addEventListener('load', () => {
+// Notification Function
+function showNotification(message, isError = false) {
+    const notification = elements.notification;
+    notification.textContent = message;
+    notification.style.backgroundColor = isError ? '#ff4444' : '#4CAF50';
+    notification.classList.add('show');
+    
     setTimeout(() => {
-        document.querySelector('.loader').style.opacity = '0';
-        setTimeout(() => document.querySelector('.loader').style.display = 'none', 500);
-    }, 2500);
-    updateHistoryDisplay();
-});
+        notification.classList.remove('show');
+    }, 3000);
+}
 
-// Morse Sound Player (unchanged)
+// Morse Sound Player
 function playMorseSound(code) {
     const ctx = new (window.AudioContext || window.webkitAudioContext)();
     const osc = ctx.createOscillator();
@@ -199,3 +169,131 @@ function playMorseSound(code) {
     osc.start();
     osc.stop(time);
 }
+
+// Camera and Image Processing Functions
+function setupCameraHandlers() {
+    // Toggle camera options
+    elements.openCamera.addEventListener('click', () => {
+        elements.cameraOptions.classList.toggle('hidden');
+    });
+
+    // Take photo option
+    elements.takePhoto.addEventListener('click', () => {
+        elements.cameraOptions.classList.add('hidden');
+        elements.imageUpload.setAttribute('capture', 'environment');
+        elements.imageUpload.click();
+    });
+
+    // Choose photo option
+    elements.choosePhoto.addEventListener('click', () => {
+        elements.cameraOptions.classList.add('hidden');
+        elements.imageUpload.removeAttribute('capture');
+        elements.imageUpload.click();
+    });
+
+    // Cancel preview
+    elements.cancelPreview.addEventListener('click', () => {
+        elements.imagePreviewContainer.classList.add('hidden');
+    });
+
+    // Image upload handler
+    elements.imageUpload.addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        // Show image preview
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            elements.imagePreview.src = e.target.result;
+            elements.imagePreviewContainer.classList.remove('hidden');
+        };
+        reader.readAsDataURL(file);
+
+        // Show loading state
+        const originalHTML = elements.openCamera.innerHTML;
+        elements.openCamera.innerHTML = '<i class="fas fa-spinner fa-pulse"></i>';
+        elements.openCamera.disabled = true;
+
+        try {
+            const { createWorker } = await import('https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js');
+            const worker = createWorker();
+            await worker.load();
+            await worker.loadLanguage('eng');
+            await worker.initialize('eng');
+            const { data: { text } } = await worker.recognize(file);
+            
+            elements.input.value = text.trim();
+            showNotification('Text extracted successfully!');
+            
+        } catch (error) {
+            console.error("OCR Error:", error);
+            showNotification('Failed to read text from image', true);
+        } finally {
+            // Reset button
+            elements.openCamera.innerHTML = originalHTML;
+            elements.openCamera.disabled = false;
+            e.target.value = ''; // Reset file input
+            elements.imagePreviewContainer.classList.add('hidden');
+        }
+    });
+}
+
+// Event Listeners
+function setupEventListeners() {
+    validateInput();
+    elements.input.addEventListener('input', validateInput);
+    elements.translate.addEventListener("click", translateText);
+
+    elements.copy.addEventListener("click", () => {
+        elements.output.select();
+        document.execCommand("copy");
+        elements.copy.innerHTML = '<i class="fas fa-check"></i>';
+        setTimeout(() => elements.copy.innerHTML = '<i class="far fa-copy"></i>', 2000);
+    });
+
+    elements.test.addEventListener("click", () => {
+        if (elements.output.value) {
+            elements.test.classList.add('playing');
+            playMorseSound(elements.output.value);
+            setTimeout(() => elements.test.classList.remove('playing'), 2000);
+        }
+    });
+
+    elements.reverse.addEventListener("click", () => {
+        if (elements.output.value) {
+            [elements.input.value, elements.output.value] = [elements.output.value, elements.input.value];
+            elements.reverse.classList.add('active');
+            setTimeout(() => elements.reverse.classList.remove('active'), 1000);
+            if (elements.input.value.trim()) translateText();
+        }
+    });
+
+    elements.history.show.addEventListener('click', () => {
+        elements.history.panel.classList.toggle('hidden');
+        if (!elements.history.panel.classList.contains('hidden')) updateHistoryDisplay();
+    });
+
+    elements.history.clear.addEventListener('click', () => {
+        translationHistory = [];
+        localStorage.removeItem('morseHistory');
+        updateHistoryDisplay();
+    });
+}
+
+// Initialization
+function init() {
+    // Loader animation
+    setTimeout(() => {
+        document.querySelector('.loader').style.opacity = '0';
+        setTimeout(() => document.querySelector('.loader').style.display = 'none', 500);
+    }, 2500);
+    
+    // Setup all event listeners
+    setupEventListeners();
+    setupCameraHandlers();
+    
+    // Update history display
+    updateHistoryDisplay();
+}
+
+window.addEventListener('load', init);
