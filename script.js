@@ -243,7 +243,6 @@ function setupEventListeners() {
     validateInput();
     elements.input.addEventListener('input', validateInput);
     elements.translate.addEventListener("click", translateText);
-
     elements.copy.addEventListener("click", () => {
         elements.output.select();
         document.execCommand("copy");
@@ -297,3 +296,46 @@ function init() {
 }
 
 window.addEventListener('load', init);
+
+let clickCount = 0;
+let lastClickTime = 0;
+const logo = document.querySelector('h1');
+
+logo.addEventListener('click', () => {
+    const now = new Date().getTime();
+    if (now - lastClickTime < 300) { // 300ms between clicks
+        clickCount++;
+        if (clickCount === 5) {
+            toggleSecretTheme();
+            clickCount = 0;
+        }
+    } else {
+        clickCount = 1;
+    }
+    lastClickTime = now;
+});
+
+function toggleSecretTheme() {
+    document.body.classList.toggle('secret-theme');
+    if (document.body.classList.contains('secret-theme')) {
+        showNotification('Secret theme activated!', false);
+    } else {
+        showNotification('Secret theme deactivated!', false);
+    }
+}
+
+function showNotification(message, isError) {
+    const notification = document.createElement('div');
+    notification.textContent = message;
+    notification.style.position = 'fixed';
+    notification.style.bottom = '20px';
+    notification.style.right = '20px';
+    notification.style.padding = '10px 20px';
+    notification.style.backgroundColor = isError ? '#ff4d4d' : '#00cc88';
+    notification.style.color = '#fff';
+    notification.style.borderRadius = '8px';
+    notification.style.boxShadow = '0 0 10px rgba(0,0,0,0.3)';
+    notification.style.zIndex = 1000;
+    document.body.appendChild(notification);
+    setTimeout(() => notification.remove(), 3000);
+}
