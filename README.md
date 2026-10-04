@@ -38,6 +38,13 @@ No continuous integration configured. Verify the project by opening `index.html`
 - `const`/`let` for variable declarations
 - Double quotes for string literals, template literals for messages
 - Semicolons at end of statements
+
+## Screenshots
+
+![Screenshot 1](docs/screenshots/mocode2.png)
+
+![Screenshot 2](docs/screenshots/mocode1.png)
+
 ## Code example
 ```js
 // Example: get Morse code for a character
