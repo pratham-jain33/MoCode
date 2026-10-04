@@ -1,5 +1,6 @@
 # MoCode
 ![License: CC0-1.0](https://img.shields.io/badge/License-CC0--1.0-yellow.svg)
+
 MoCode is a simple web-based Morse Code Translator built with vanilla JavaScript.
 ## Motivation
 Provide an easy-to-use tool for converting between plain text and Morse code directly in the browser.
